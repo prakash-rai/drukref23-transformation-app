@@ -1,0 +1,18 @@
+node_modules
+dist
+.output
+.git
+.impeccable
+.codex
+.vscode
+.tanstack
+deployment
+docs
+tests
+*.md
+*.log
+.DS_Store
+# Secrets are supplied at runtime through env_file, never baked into the image.
+.env
+.env.*
+!.env.example
