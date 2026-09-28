@@ -17,6 +17,10 @@ All notable changes to this project are documented here. The format follows [Kee
 - IIS reverse-proxy configuration (`deployment/iis/web.config`) and a production runbook.
 - The `docs/` folder with architecture, configuration, development, deployment and GP-service guides, ADRs, and this changelog. Documentation drift checks run in `pnpm test`.
 
+### Fixed
+
+- The page no longer scrolls sideways. The hidden file input was 100% wide, which pushed the page past the viewport.
+
 ### Changed
 
 - Checking a running job now rides out up to 3 minutes of app restart or ArcGIS outage, instead of giving up after about 10 seconds. Other errors still end the wait after 5 attempts.

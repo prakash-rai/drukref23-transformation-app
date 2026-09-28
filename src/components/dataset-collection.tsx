@@ -1,7 +1,6 @@
 import { FilePlus2, FolderOpen, UploadCloud } from 'lucide-react'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
-import { Input } from '#/components/ui/input'
 import { ActivityPanel } from '#/components/activity-panel'
 import { DatasetCard } from '#/components/dataset-card'
 import type { DatasetEntry } from '#/lib/upload-package'
@@ -32,7 +31,7 @@ export function DatasetCollection({ entries, inputRef, onFile, onFolder, onStart
         </div>
       </CardHeader>
       <CardContent className="space-y-5">
-        <Input ref={inputRef} className="sr-only" type="file" accept=".gpkg,.zip" multiple onChange={onFile} />
+        <input ref={inputRef} className="sr-only" type="file" accept=".gpkg,.zip" multiple onChange={onFile} />
         {!entries.length && <div className="rounded-xl border border-dashed border-[#b9cbbd] bg-[#f2f6ef] px-5 py-10 text-center"><UploadCloud className="mx-auto mb-3 text-slate-400" size={24} /><p className="text-sm font-medium text-slate-700">No datasets added</p><p className="mt-1 text-xs text-slate-500">Select DrukRef03 data with Add files or Add folder.</p></div>}
         <div className="space-y-2">{entries.map((entry) => <DatasetCard key={entry.id} entry={entry} onRemove={() => onRemove(entry.id)} onChange={(datasetId) => onToggle(entry.id, datasetId)} />)}</div>
         {messages.length || error || busy ? <ActivityPanel messages={messages} error={error} busy={busy} /> : null}
