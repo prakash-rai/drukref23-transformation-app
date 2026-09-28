@@ -10,4 +10,5 @@ Short records of significant decisions: what was decided, why, and what it costs
 | --- | --- | --- |
 | [0001](0001-server-side-arcgis-token-proxy.md) | Call ArcGIS from the app server with a server-held token | Accepted |
 | [0002](0002-serve-under-iis-sub-path.md) | Serve the app at `/drukref/` behind IIS on the ArcGIS host | Accepted |
-| [0003](0003-single-container-without-nginx.md) | Run a single container; remove the Nginx gateway | Accepted |
+| [0003](0003-single-container-without-nginx.md) | Run a single container; remove the Nginx gateway | Superseded by 0004 (container part) |
+| [0004](0004-windows-service-with-github-deploys.md) | Run as a Windows service; deploy from GitHub through a self-hosted runner | Accepted |

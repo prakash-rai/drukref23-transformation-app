@@ -5,6 +5,7 @@ const client = { health: vi.fn(), upload: vi.fn(), submit: vi.fn(), jobStatus: v
 vi.mock('#/server/arcgis-service', async (importOriginal) => ({ ...await importOriginal<typeof import('#/server/arcgis-service')>(), arcgis: () => client }))
 
 const { Route: Health } = await import('#/routes/api/health')
+const { Route: Live } = await import('#/routes/api/live')
 const { Route: Jobs } = await import('#/routes/api/jobs')
 const { Route: JobStatus } = await import('#/routes/api/jobs.$jobId')
 const { Route: JobResult } = await import('#/routes/api/jobs.$jobId.result')
@@ -29,6 +30,17 @@ describe('GET /api/health', () => {
     const response = await get(Health)
     expect(response.status).toBe(503)
     expect(await response.json()).toEqual({ status: 'offline', error: 'ArcGIS sign-in failed: bad password.' })
+  })
+})
+
+describe('GET /api/live', () => {
+  it('reports the app as running without contacting ArcGIS', async () => {
+    client.health.mockRejectedValue(new ArcGISError('Cannot reach ArcGIS Server.', 503))
+    const response = await get(Live)
+    expect(response.status).toBe(200)
+    expect(response.headers.get('cache-control')).toBe('no-store')
+    expect(await response.json()).toEqual({ status: 'live' })
+    expect(client.health).not.toHaveBeenCalled()
   })
 })
 

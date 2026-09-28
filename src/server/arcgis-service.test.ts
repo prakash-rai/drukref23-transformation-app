@@ -70,7 +70,7 @@ describe('error responses', () => {
 
   it('hides unexpected internal errors', () => {
     const log = vi.spyOn(console, 'error').mockImplementation(() => undefined)
-    expect(explain(new Error('ECONNRESET at /internal/path with password=secret'))).toEqual({ message: 'The app server hit an unexpected error. Check the container logs.', status: 500 })
+    expect(explain(new Error('ECONNRESET at /internal/path with password=secret'))).toEqual({ message: 'The app server hit an unexpected error. Check the service logs.', status: 500 })
     expect(log).toHaveBeenCalled()
     log.mockRestore()
   })

@@ -1,0 +1,46 @@
+# Checks every pull request. Branch protection on main requires the "pnpm check" job (docs/development.md#continuous-integration).
+# Runs on GitHub-hosted runners only: pull requests never reach the production server's self-hosted runner.
+name: CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: pnpm check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+
+  windows-deploy:
+    name: Windows deploy script
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Deploy, roll back and redeploy against a real Windows service
+        shell: powershell
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File deployment/windows/test-deploy.ps1

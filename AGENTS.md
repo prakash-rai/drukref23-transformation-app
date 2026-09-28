@@ -7,7 +7,7 @@ This TanStack Start application packages spatial datasets in the browser and sub
 ## Development
 
 - Use pnpm.
-- Run `pnpm check` before considering a change complete. Run `pnpm test:live` when ArcGIS integration changes (needs `.env` and network access to the server).
+- Run `pnpm check` before considering a change complete. CI runs it on every pull request; merging to `main` deploys to production. Run `pnpm test:live` when ArcGIS integration changes (needs `.env` and network access to the server).
 - Run `pnpm dev` for local development.
 - Keep file inspection and ZIP packaging logic in `src/lib` rather than route components.
 - Keep dataset state transitions pure and testable.
@@ -47,7 +47,7 @@ Docs live in `docs/` (index and maintenance rules in `docs/README.md`). Update t
 | An environment variable (added, renamed, default) | `.env.example` and `docs/configuration.md` (enforced by `tests/docs.test.ts`) |
 | Request flow, API routes, token handling, security | `docs/architecture.md` |
 | Scripts, tooling, test layout | `docs/development.md` |
-| Dockerfile, compose, IIS config, ports, base path | `docs/deployment.md` (and `deployment/iis/web.config`) |
+| `deployment/windows/`, GitHub workflows, IIS config, ports, base path | `docs/deployment.md` (and `deployment/iis/web.config`) |
 | `deployment/ProjectUploadPackage.py` or GP publishing | `docs/arcgis-gp-service.md` |
 | Hosting, security trade-offs, core dependencies | a new ADR in `docs/decisions/` |
 | User-facing behaviour or scope | `PRODUCT.md`; visual design: `DESIGN.md` |
