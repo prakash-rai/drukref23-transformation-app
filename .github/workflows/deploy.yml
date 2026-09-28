@@ -1,0 +1,73 @@
+# Deploys main to the production Windows server (docs/deployment.md#automatic-deployment).
+# The build and checks run on GitHub-hosted runners; only the install step runs on the server's self-hosted runner,
+# and only for pushes to main (a merged pull request) or a manual run from the Actions tab.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One deploy at a time; a newer merge waits for the running deploy instead of cancelling it.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      APP_BASE_PATH: ${{ vars.APP_BASE_PATH || '/drukref/' }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - name: Assemble release folder
+        run: |
+          mkdir release
+          cp -R .output/. release/
+          cp deployment/windows/start.mjs deployment/windows/deploy.ps1 release/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release
+          path: release
+          retention-days: 30
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy to Windows server
+    needs: build
+    runs-on: [self-hosted, windows, drukref-production]
+    environment:
+      name: production
+      url: https://cadastral.systems.gov.bt/drukref/
+    # 1 min app check + 10 min ArcGIS wait + copy and switch.
+    timeout-minutes: 20
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          name: release
+          path: ${{ runner.temp }}/release
+      - name: Install release, check health, roll back on failure
+        shell: powershell
+        env:
+          RELEASE: ${{ github.sha }}
+          APP_PORT: ${{ vars.APP_PORT || '8080' }}
+          APP_BASE_PATH: ${{ vars.APP_BASE_PATH || '/drukref/' }}
+          ARCGIS_SERVER_URL: ${{ vars.ARCGIS_SERVER_URL || 'https://cadastral.systems.gov.bt/server' }}
+        run: |
+          $source = Join-Path $env:RUNNER_TEMP 'release'
+          powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $source 'deploy.ps1') `
+            -Source $source -Release $env:RELEASE.Substring(0, 12) `
+            -Port $env:APP_PORT -BasePath $env:APP_BASE_PATH -ArcGISUrl $env:ARCGIS_SERVER_URL
+          exit $LASTEXITCODE

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { initialState, workflowReducer } from './upload-workflow'
+import { HEALTH_RECHECK_MS, healthRecheckDelay, initialState, workflowReducer } from './upload-workflow'
 
 describe('workflow state', () => {
   it('starts by checking the service', () => {
@@ -18,5 +18,14 @@ describe('workflow state', () => {
     state = workflowReducer(state, { type: 'error', value: 'Upload failed.' })
     expect(state).toMatchObject({ messages: ['uploading'], error: 'Upload failed.' })
     expect(workflowReducer(state, { type: 'clear-activity' })).toMatchObject({ messages: [], error: '' })
+  })
+})
+
+describe('automatic service re-check', () => {
+  it('re-checks every 30 seconds only while the service is unavailable', () => {
+    expect(HEALTH_RECHECK_MS).toBe(30_000)
+    expect(healthRecheckDelay('offline')).toBe(HEALTH_RECHECK_MS)
+    expect(healthRecheckDelay('online')).toBeNull()
+    expect(healthRecheckDelay('checking')).toBeNull()
   })
 })

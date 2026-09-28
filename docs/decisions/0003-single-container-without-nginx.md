@@ -1,6 +1,6 @@
 # 0003: Run a single container; remove the Nginx gateway
 
-**Status:** Accepted (2026-09-25)
+**Status:** Superseded by [0004](0004-windows-service-with-github-deploys.md) for how the app runs (2026-09-28). IIS as the only reverse proxy still applies. Originally accepted 2026-09-25.
 
 ## Context
 

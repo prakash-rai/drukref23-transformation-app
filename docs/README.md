@@ -7,7 +7,7 @@ Start with the [project README](../README.md). This folder holds the detailed do
 | [architecture.md](architecture.md) | need to understand how the browser, app server, IIS and ArcGIS fit together | `src/server`, `src/routes/api` |
 | [configuration.md](configuration.md) | set up `.env` or change a setting | `src/server/arcgis-config.ts`, `.env.example` |
 | [development.md](development.md) | run, change or test the app locally | `package.json`, tests |
-| [deployment.md](deployment.md) | install, upgrade, roll back or troubleshoot production | `Dockerfile`, `docker-compose.yml`, `deployment/iis/web.config` |
+| [deployment.md](deployment.md) | install, deploy, roll back or troubleshoot production | `deployment/windows/`, `.github/workflows/`, `deployment/iis/web.config` |
 | [arcgis-gp-service.md](arcgis-gp-service.md) | publish or change the ArcGIS `ProjectUploadPackage` GP service | `deployment/ProjectUploadPackage.py` |
 | [decisions/](decisions/README.md) | want to know *why* something is built the way it is | — |
 | [../CHANGELOG.md](../CHANGELOG.md) | want to know what changed in a release | — |
