@@ -28,7 +28,7 @@ Set-Content -LiteralPath "$broken\start.mjs" -Value 'process.exit(1)'
 
 # Stand-in for ArcGIS Server's unauthenticated rest/info endpoint.
 $fakeArcGIS = Join-Path $env:RUNNER_TEMP 'fake-arcgis.mjs'
-Set-Content -LiteralPath $fakeArcGIS -Value "import { createServer } from 'node:http'; createServer((_, res) => res.end('{""currentVersion"":12.1}')).listen(9100, '127.0.0.1')"
+Set-Content -LiteralPath $fakeArcGIS -Value "import { createServer } from 'node:http'; createServer((_, res) => res.writeHead(200, { 'Content-Type': 'application/json' }).end('{""currentVersion"":12.1}')).listen(9100, '127.0.0.1')"
 $fake = Start-Process -FilePath (Get-Command node).Source -ArgumentList "`"$fakeArcGIS`"" -PassThru -WindowStyle Hidden
 
 function Invoke-Deploy([string] $release, [string] $source, [string] $arcgisUrl = 'http://127.0.0.1:9/server') {

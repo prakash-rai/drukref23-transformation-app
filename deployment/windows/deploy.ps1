@@ -56,7 +56,9 @@ function Invoke-Json([string] $url) {
   $status = 0; $text = ''
   try {
     $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 15 -Headers @{ 'Cache-Control' = 'no-cache' }
-    $status = [int] $response.StatusCode; $text = $response.Content
+    $status = [int] $response.StatusCode
+    # Windows PowerShell 5.1 returns bytes instead of text when the response has no text content type.
+    $text = if ($response.Content -is [byte[]]) { [System.Text.Encoding]::UTF8.GetString($response.Content) } else { $response.Content }
   } catch [System.Net.WebException] {
     $response = $_.Exception.Response
     if ($response) {
