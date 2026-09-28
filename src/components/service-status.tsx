@@ -13,7 +13,7 @@ export function ServiceAlert({ reason, onRetry }: { reason: string; onRetry: () 
   return (
     <div role="alert" className="mb-5 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
       <CircleAlert size={18} className="mt-0.5 shrink-0 text-red-600" />
-      <div className="min-w-0 flex-1"><p className="font-semibold">The transformation service is unavailable</p><p className="mt-0.5 break-words text-xs leading-5 text-red-700">{reason}</p></div>
+      <div className="min-w-0 flex-1"><p className="font-semibold">The transformation service is unavailable</p><p className="mt-0.5 break-words text-xs leading-5 text-red-700">{reason}</p><p className="mt-1 text-xs leading-5 text-red-700">This page checks again automatically every 30 seconds.</p></div>
       <button type="button" onClick={onRetry} className="shrink-0 rounded-md px-2 py-1 text-xs font-semibold text-red-800 hover:bg-red-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e76f51]">Retry</button>
     </div>
   )

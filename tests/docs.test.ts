@@ -18,13 +18,16 @@ function markdownFiles(dir = root): string[] {
   })
 }
 
-/** Environment variables read by the code or by docker-compose.yml. */
+/** Environment variables read by the code, the Windows service entry point, or the Vite build. */
 function variablesUsedByCode() {
   const config = read('src/server/arcgis-config.ts')
   const fromConfig = [...config.matchAll(/env\.([A-Z][A-Z0-9_]+)/g)].map((match) => match[1]!)
-  const fromCompose = [...read('docker-compose.yml').matchAll(/\$\{([A-Z][A-Z0-9_]+)/g)].map((match) => match[1]!)
+  // start.mjs also sets Nitro's own variables (`process.env.NAME ??= …`); only the ones it reads belong in .env.
+  const start = read('deployment/windows/start.mjs')
+  const setByStart = new Set([...start.matchAll(/process\.env\.([A-Z][A-Z0-9_]+) \?\?=/g)].map((match) => match[1]!))
+  const fromStart = [...start.matchAll(/process\.env\.([A-Z][A-Z0-9_]+)/g)].map((match) => match[1]!).filter((name) => !setByStart.has(name))
   const fromVite = [...read('vite.config.ts').matchAll(/env\.([A-Z][A-Z0-9_]+)/g)].map((match) => match[1]!)
-  return new Set([...fromConfig, ...fromCompose, ...fromVite])
+  return new Set([...fromConfig, ...fromStart, ...fromVite])
 }
 
 const exampleVariables = new Set([...read('.env.example').matchAll(/^([A-Z][A-Z0-9_]+)=/gm)].map((match) => match[1]!))
@@ -71,6 +74,11 @@ describe('deployment configuration', () => {
     expect(read('deployment/iis/web.config')).toContain(`url="http://127.0.0.1:${example.APP_PORT}${base}{R:1}"`)
     expect(read('deployment/iis/web.config')).toContain(`url="${base}"`)
     expect(example.ARCGIS_TOKEN_REFERER).toBe(`https://cadastral.systems.gov.bt${base}`)
+  })
+
+  it('the Windows service runs the release that deploy.ps1 switches', () => {
+    expect(read('deployment/windows/DrukRef.xml')).toContain('%BASE%\\app\\current\\start.mjs')
+    expect(read('deployment/windows/deploy.ps1')).toMatch(/\$current = Join-Path \$app 'current'/)
   })
 
   it('changelog has an Unreleased section', () => {

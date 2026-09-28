@@ -1,0 +1,44 @@
+<!--
+  WinSW 2.12 service definition for the DrukRef Transformation Tool (docs/deployment.md, step 3).
+  Copy WinSW-x64.exe to C:\apps\drukref\DrukRef.exe and this file next to it as DrukRef.xml,
+  then run `.\DrukRef.exe install` as Administrator. %BASE% is C:\apps\drukref.
+  After changing this file on the server, run `.\DrukRef.exe refresh` (Administrator).
+-->
+<service>
+  <id>DrukRef</id>
+  <name>DrukRef Transformation Tool</name>
+  <description>Node.js app server for https://cadastral.systems.gov.bt/drukref/ (proxied by IIS).</description>
+
+  <executable>C:\Program Files\nodejs\node.exe</executable>
+  <!-- app\current is a junction to the active release, switched by deploy.ps1. -->
+  <arguments>"%BASE%\app\current\start.mjs"</arguments>
+  <!-- start.mjs loads .env from here. -->
+  <workingdirectory>%BASE%</workingdirectory>
+
+  <!-- Upload packages are staged here (up to MAX_UPLOAD_MB each), not on the system temp folder. -->
+  <env name="TEMP" value="%BASE%\tmp" />
+  <env name="TMP" value="%BASE%\tmp" />
+
+  <!--
+    Start after the boot-critical services. The app does not wait for ArcGIS: it starts in seconds,
+    reports ArcGIS as unavailable in /api/health until ArcGIS is ready, then recovers by itself.
+  -->
+  <startmode>Automatic</startmode>
+  <delayedAutoStart>true</delayedAutoStart>
+
+  <!-- Restart after a crash: 10 s, then 30 s, then every 60 s. The count resets after an hour without failures. -->
+  <onfailure action="restart" delay="10 sec" />
+  <onfailure action="restart" delay="30 sec" />
+  <onfailure action="restart" delay="60 sec" />
+  <resetfailure>1 hour</resetfailure>
+
+  <!-- Give running requests time to finish when the service stops (deploy, reboot). -->
+  <stoptimeout>30 sec</stoptimeout>
+
+  <!-- Rotated logs: 8 files of 10 MB each, in C:\apps\drukref\logs. -->
+  <logpath>%BASE%\logs</logpath>
+  <log mode="roll-by-size">
+    <sizeThreshold>10240</sizeThreshold>
+    <keepFiles>8</keepFiles>
+  </log>
+</service>
