@@ -13,6 +13,10 @@ All notable changes to this project are documented here. The format follows [Kee
 - IIS reverse-proxy configuration (`deployment/iis/web.config`) and a production runbook.
 - The `docs/` folder with architecture, configuration, development, deployment and GP-service guides, ADRs, and this changelog. Documentation drift checks run in `pnpm test`.
 
+### Fixed
+
+- The page no longer scrolls sideways. The hidden file input was 100% wide, which pushed the page past the viewport.
+
 ### Changed
 
 - The app is served under `/drukref/` (`APP_BASE_PATH`) for publication at `https://cadastral.systems.gov.bt/drukref/`.
