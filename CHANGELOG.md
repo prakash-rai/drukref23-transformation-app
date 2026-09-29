@@ -7,7 +7,7 @@ All notable changes to this project are documented here. The format follows [Kee
 ### Added
 
 - Client-side DrukRef03 check before upload. It reads Shapefile `.prj` files and GeoPackage spatial reference tables, rejects datasets in another coordinate system with the detected name, and flags ones it cannot confirm.
-- The empty dataset list explains what Add files and Add folder accept, and that GeoJSON is not supported.
+- A "What you can add" panel above the dataset list explains which data each of Add files and Add folder takes, and that GeoJSON is not supported.
 - Add files explains incomplete Shapefile selections and unsupported formats, with a shortcut to Add folder.
 - ZIPs made by compressing a folder are read from that folder.
 - Ignored files show why they were ignored.
