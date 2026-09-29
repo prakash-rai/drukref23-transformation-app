@@ -1,17 +1,25 @@
 import { Ban, FilePlus2, FolderOpen } from 'lucide-react'
 import { sourceCoordinateSystem } from '#/lib/transformation'
 
-const term = 'flex items-center gap-1.5 self-start whitespace-nowrap font-semibold text-[#173c34]'
+const actions = [
+  { Icon: FilePlus2, label: 'Add files', detail: 'A GeoPackage (.gpkg), or a ZIP of GeoPackages or Shapefiles' },
+  { Icon: FolderOpen, label: 'Add folder', detail: 'Unzipped Shapefiles (.shp, .shx, .dbf, .prj). Subfolders aren’t read.' },
+]
 
 /** Which add action takes which data, kept visible above the dataset list. */
 export function UploadInstructions() {
   return (
-    <dl aria-label="What each add action accepts" className="mb-5 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1.5 text-xs leading-5 text-[#56655c]">
-      <dt className={term}><FilePlus2 size={13} aria-hidden="true" />Add files</dt>
-      <dd>GeoPackage (.gpkg), or a ZIP of GeoPackages or Shapefiles</dd>
-      <dt className={term}><FolderOpen size={13} aria-hidden="true" />Add folder</dt>
-      <dd>Unzipped Shapefiles (.shp, .shx, .dbf, .prj). Subfolders aren’t read.</dd>
-    </dl>
+    <ul aria-label="What each add action accepts" className="mb-6 grid gap-4 sm:grid-cols-2 sm:gap-6">
+      {actions.map(({ Icon, label, detail }) => (
+        <li key={label} className="flex min-w-0 items-start gap-3">
+          <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#e5eee4] text-[#2f6958]"><Icon size={18} /></span>
+          <div className="min-w-0">
+            <p className="text-[0.9375rem] font-semibold leading-6 text-[#173c34]">{label}</p>
+            <p className="text-[0.9375rem] leading-[1.6] text-[#56655c]">{detail}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
   )
 }
 
