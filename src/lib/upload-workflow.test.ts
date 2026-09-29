@@ -19,4 +19,11 @@ describe('workflow state', () => {
     expect(state).toMatchObject({ messages: ['uploading'], error: 'Upload failed.' })
     expect(workflowReducer(state, { type: 'clear-activity' })).toMatchObject({ messages: [], error: '' })
   })
+
+  it('keeps file notices until the next add clears activity', () => {
+    const notice = { kind: 'shapefile-part' as const, files: ['roads.shp'], message: 'roads.shp is part of a Shapefile.' }
+    const state = workflowReducer(initialState, { type: 'notices', value: [notice] })
+    expect(state.notices).toEqual([notice])
+    expect(workflowReducer(state, { type: 'clear-activity' }).notices).toEqual([])
+  })
 })

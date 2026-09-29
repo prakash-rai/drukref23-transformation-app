@@ -30,6 +30,8 @@ Docker container: Node / Nitro (TanStack Start)
 
 The browser builds the ZIP locally (`src/lib/upload-package.ts`); the GP service (see [arcgis-gp-service.md](arcgis-gp-service.md)) does the NTv2 transformation.
 
+Before upload, the browser pre-checks each dataset's coordinate system: it reads the Shapefile `.prj`, or the GeoPackage `gpkg_geometry_columns` and `gpkg_spatial_ref_sys` tables (only those pages are read, so large files cost a few kilobytes). Datasets that are clearly not DrukRef03 are rejected; ones that look like DrukRef03 but cannot be confirmed stay included with a caution. The GP service's factory-code check (`5266`) remains the final authority.
+
 ## Security boundary
 
 - ArcGIS credentials exist only in `.env` on the server. They are read by `src/server/arcgis-config.ts`, which is never imported by browser code. The built client bundle is checked to contain no sign-in code.
@@ -43,7 +45,10 @@ The browser builds the ZIP locally (`src/lib/upload-package.ts`); the GP service
 
 | Path | Responsibility |
 | --- | --- |
-| `src/lib/upload-package.ts` | Inspect selected files and folders; build the submission ZIP |
+| `src/lib/upload-package.ts` | Inspect selected files, folders and ZIPs; build the submission ZIP |
+| `src/lib/file-check.ts` | Sort Add files selections; notices for incomplete Shapefiles and unsupported formats |
+| `src/lib/crs.ts`, `src/lib/projection-check.ts` | Client-side DrukRef03 pre-check of WKT and GeoPackage spatial reference rows |
+| `src/lib/sqlite-reader.ts` | Minimal read-only SQLite reader used for GeoPackage metadata |
 | `src/lib/arcgis-upload.ts` | Browser client for `/api/*` (health, submit, poll, download) |
 | `src/lib/upload-workflow.ts` | UI state (React reducer + hook) |
 | `src/server/arcgis-config.ts` | Environment → configuration |

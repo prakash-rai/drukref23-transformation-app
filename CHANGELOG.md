@@ -6,6 +6,12 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Added
 
+- Client-side DrukRef03 check before upload. It reads Shapefile `.prj` files and GeoPackage spatial reference tables, rejects datasets in another coordinate system with the detected name, and flags ones it cannot confirm.
+- The empty dataset list explains what Add files and Add folder accept, and that GeoJSON is not supported.
+- Add files explains incomplete Shapefile selections and unsupported formats, with a shortcut to Add folder.
+- ZIPs made by compressing a folder are read from that folder.
+- Ignored files show why they were ignored.
+- The Transform button explains why it is disabled, and what the download contains.
 - Server-side ArcGIS integration (`src/server`, `src/routes/api`). It signs in with `.env` credentials and caches and renews the token. It streams uploads to ArcGIS and results back to the browser.
 - A service banner that shows the exact reason the service is unavailable, with **Retry**.
 - `pnpm test:live` for end-to-end checks against the real ArcGIS Server.
@@ -15,10 +21,13 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Fixed
 
+- Selecting several ZIP files with Add files no longer fails; each ZIP is inspected separately.
+- Add folder works in Firefox and Safari through a folder-input fallback.
 - The page no longer scrolls sideways. The hidden file input was 100% wide, which pushed the page past the viewport.
 
 ### Changed
 
+- The service banner shows a plain-language message; the technical reason is under Details.
 - The app is served under `/drukref/` (`APP_BASE_PATH`) for publication at `https://cadastral.systems.gov.bt/drukref/`.
 - ArcGIS target is now `https://cadastral.systems.gov.bt/server` (was `172.30.4.165`).
 - Job polling allows up to 60 minutes and tolerates brief network errors.
