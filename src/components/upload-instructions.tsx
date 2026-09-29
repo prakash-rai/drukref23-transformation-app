@@ -10,19 +10,19 @@ const actions = [
 export function UploadInstructions({ onAddFiles, onAddFolder }: { onAddFiles: () => void; onAddFolder: () => void }) {
   const handlers = { files: onAddFiles, folder: onAddFolder }
   return (
-    <div className="rounded-xl border border-dashed border-[#b9cbbd] bg-[#f2f6ef] px-4 py-8 sm:px-8">
+    <div className="rounded-xl border border-dashed border-[#b9cbbd] bg-[#f2f6ef] px-4 py-6 sm:px-6">
       <div className="text-center">
-        <span aria-hidden="true" className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#2f6958] shadow-sm ring-1 ring-[#d7ddd5]"><UploadCloud size={20} /></span>
-        <p className="mt-3 text-[0.9375rem] font-semibold text-[#173c34]">No datasets added yet</p>
-        <p className="mt-0.5 text-sm text-[#56655c]">Pick the option that matches your data.</p>
+        <span aria-hidden="true" className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#2f6958] shadow-sm ring-1 ring-[#d7ddd5]"><UploadCloud size={17} /></span>
+        <p className="mt-2.5 text-sm font-semibold text-[#173c34]">No datasets added yet</p>
+        <p className="mt-0.5 text-xs text-[#56655c]">Pick the option that matches your data.</p>
       </div>
-      <div className="mx-auto mt-6 grid max-w-2xl gap-3 sm:grid-cols-2">
+      <div className="mx-auto mt-4 grid max-w-2xl gap-2.5 sm:grid-cols-2">
         {actions.map(({ key, Icon, label, detail }) => (
-          <button key={key} type="button" onClick={handlers[key]} className="group flex min-w-0 items-start gap-3 rounded-lg border border-[#d7ddd5] bg-white p-4 text-left transition hover:border-[#2f6958] hover:shadow-[0_6px_18px_rgba(23,60,52,0.08)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e76f51]">
-            <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#e5eee4] text-[#2f6958] transition-colors group-hover:bg-[#2f6958] group-hover:text-white"><Icon size={18} /></span>
+          <button key={key} type="button" onClick={handlers[key]} className="group flex min-w-0 items-start gap-2.5 rounded-lg border border-[#d7ddd5] bg-white px-3 py-2.5 text-left transition hover:border-[#2f6958] hover:shadow-[0_6px_18px_rgba(23,60,52,0.08)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e76f51]">
+            <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#e5eee4] text-[#2f6958] transition-colors group-hover:bg-[#2f6958] group-hover:text-white"><Icon size={15} /></span>
             <span className="min-w-0">
-              <span className="block text-[0.9375rem] font-semibold leading-6 text-[#173c34]">{label}</span>
-              <span className="mt-0.5 block text-sm leading-[1.55] text-[#56655c]">{detail}</span>
+              <span className="block text-sm font-semibold leading-5 text-[#173c34]">{label}</span>
+              <span className="block text-xs leading-5 text-[#56655c]">{detail}</span>
             </span>
           </button>
         ))}
