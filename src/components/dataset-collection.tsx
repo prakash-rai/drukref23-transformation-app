@@ -4,6 +4,7 @@ import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 import { ActivityPanel } from '#/components/activity-panel'
 import { DatasetCard } from '#/components/dataset-card'
+import { SourceRequirement, UnsupportedFormats } from '#/components/upload-instructions'
 import type { FileNotice } from '#/lib/file-check'
 import type { DatasetEntry } from '#/lib/upload-package'
 
@@ -44,7 +45,7 @@ export function DatasetCollection({ entries, inputRef, onFile, onFolder, onDirec
     <Card className="border-[#d7ddd5] shadow-[0_14px_40px_rgba(23,60,52,0.08)]">
       <CardHeader>
         <div className="flex items-center justify-between gap-4">
-          <CardTitle>Datasets</CardTitle>
+          <div className="min-w-0"><CardTitle>Datasets</CardTitle><SourceRequirement /></div>
           <div className="flex flex-wrap justify-end gap-2">
             <Button variant="outline" onClick={() => { onStartAdding(); inputRef.current?.click() }}><FilePlus2 size={16} />Add files</Button>
             <Button variant="outline" onClick={pickFolder}><FolderOpen size={16} />Add folder</Button>
@@ -65,7 +66,8 @@ export function DatasetCollection({ entries, inputRef, onFile, onFolder, onDirec
           </div>
         ))}</div>}
         {!entries.length && <div className="rounded-xl border border-dashed border-[#b9cbbd] bg-[#f2f6ef] px-5 py-10 text-center"><UploadCloud className="mx-auto mb-3 text-[#68766d]" size={24} aria-hidden="true" /><p className="text-sm font-medium text-[#173c34]">No datasets added yet</p><p className="mt-1 text-xs text-[#56655c]">Use Add files or Add folder to start.</p></div>}
-        <div className="space-y-2">{entries.map((entry) => <DatasetCard key={entry.id} entry={entry} onRemove={() => onRemove(entry.id)} onChange={(datasetId) => onToggle(entry.id, datasetId)} />)}</div>
+        {entries.length > 0 && <div className="space-y-2">{entries.map((entry) => <DatasetCard key={entry.id} entry={entry} onRemove={() => onRemove(entry.id)} onChange={(datasetId) => onToggle(entry.id, datasetId)} />)}</div>}
+        <UnsupportedFormats />
         {messages.length || error || busy ? <ActivityPanel messages={messages} error={error} busy={busy} /> : null}
       </CardContent>
     </Card>
