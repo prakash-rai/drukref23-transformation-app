@@ -1,10 +1,10 @@
 import { useRef } from 'react'
-import { AlertTriangle, FilePlus2, FolderOpen, UploadCloud } from 'lucide-react'
+import { AlertTriangle, FilePlus2, FolderOpen } from 'lucide-react'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 import { ActivityPanel } from '#/components/activity-panel'
 import { DatasetCard } from '#/components/dataset-card'
-import { SourceRequirement, UnsupportedFormats } from '#/components/upload-instructions'
+import { SourceRequirement, UnsupportedFormats, UploadInstructions } from '#/components/upload-instructions'
 import type { FileNotice } from '#/lib/file-check'
 import type { DatasetEntry } from '#/lib/upload-package'
 
@@ -30,6 +30,10 @@ const acceptedFiles = '.gpkg,.zip,.shp,.shx,.dbf,.prj,.cpg,.sbn,.sbx'
 
 export function DatasetCollection({ entries, inputRef, onFile, onFolder, onDirectoryFiles, onStartAdding, onRemove, onToggle, messages, notices, error, busy }: Props) {
   const folderInputRef = useRef<HTMLInputElement>(null)
+  function pickFiles() {
+    onStartAdding()
+    inputRef.current?.click()
+  }
   function pickFolder() {
     onStartAdding()
     if (hasDirectoryPicker()) onFolder()
@@ -47,7 +51,7 @@ export function DatasetCollection({ entries, inputRef, onFile, onFolder, onDirec
         <div className="flex items-center justify-between gap-4">
           <div className="min-w-0"><CardTitle>Datasets</CardTitle><SourceRequirement /></div>
           <div className="flex flex-wrap justify-end gap-2">
-            <Button variant="outline" onClick={() => { onStartAdding(); inputRef.current?.click() }}><FilePlus2 size={16} />Add files</Button>
+            <Button variant="outline" onClick={pickFiles}><FilePlus2 size={16} />Add files</Button>
             <Button variant="outline" onClick={pickFolder}><FolderOpen size={16} />Add folder</Button>
           </div>
         </div>
@@ -65,7 +69,7 @@ export function DatasetCollection({ entries, inputRef, onFile, onFolder, onDirec
             {notice.kind === 'shapefile-part' && <Button variant="outline" className="h-8 shrink-0 bg-white px-3 text-xs" onClick={pickFolder}><FolderOpen size={14} />Add folder</Button>}
           </div>
         ))}</div>}
-        {!entries.length && <div className="rounded-xl border border-dashed border-[#b9cbbd] bg-[#f2f6ef] px-5 py-10 text-center"><UploadCloud className="mx-auto mb-3 text-[#68766d]" size={24} aria-hidden="true" /><p className="text-sm font-medium text-[#173c34]">No datasets added yet</p><p className="mt-1 text-xs text-[#56655c]">Use Add files or Add folder to start.</p></div>}
+        {!entries.length && <UploadInstructions onAddFiles={pickFiles} onAddFolder={pickFolder} />}
         {entries.length > 0 && <div className="space-y-2">{entries.map((entry) => <DatasetCard key={entry.id} entry={entry} onRemove={() => onRemove(entry.id)} onChange={(datasetId) => onToggle(entry.id, datasetId)} />)}</div>}
         <UnsupportedFormats />
         {messages.length || error || busy ? <ActivityPanel messages={messages} error={error} busy={busy} /> : null}
