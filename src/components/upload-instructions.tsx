@@ -4,7 +4,7 @@ import { sourceCoordinateSystem } from '#/lib/transformation'
 /** Which add action to use for each kind of data, kept visible above the dataset list. */
 export function UploadInstructions() {
   return (
-    <section aria-labelledby="upload-instructions-title" className="mb-5 rounded-xl border border-[#c9dccb] bg-[#f2f6ef] px-5 py-4 text-[#17251f]">
+    <section aria-labelledby="upload-instructions-title" className="mb-5 text-[#17251f]">
       <h2 id="upload-instructions-title" className="text-sm font-semibold text-[#173c34]">What you can add</h2>
       <p className="mt-0.5 text-xs leading-5 text-[#56655c]">All data must be in <strong className="font-semibold text-[#173c34]">{sourceCoordinateSystem}</strong>. Datasets in any other coordinate system are rejected.</p>
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
