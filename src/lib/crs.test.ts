@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest'
 import { checkSpatialRefSys, checkWkt, crsMessage, normalizeCrsName, parseWkt } from './crs'
 
 // Representative definitions; replace or extend with real NLCS exports when available.
-const esriDrukref03 = 'PROJCS["DRUKREF_03_Bhutan_National_Grid",GEOGCS["GCS_DRUKREF_03",DATUM["D_DRUKREF_03",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",250000.0],PARAMETER["False_Northing",-2500000.0],PARAMETER["Central_Meridian",90.0],PARAMETER["Scale_Factor",1.0],PARAMETER["Latitude_Of_Origin",0.0],UNIT["Meter",1.0]]'
-const ogcDrukref03 = 'PROJCS["DRUKREF 03 / Bhutan National Grid",GEOGCS["DRUKREF 03",DATUM["Bhutan_National_Geodetic_Datum",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","1058"]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433],AUTHORITY["EPSG","5264"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",90],PARAMETER["scale_factor",1],PARAMETER["false_easting",250000],PARAMETER["false_northing",-2500000],UNIT["metre",1],AUTHORITY["EPSG","5266"]]'
-const wkt2Drukref03 = 'PROJCRS["DRUKREF 03 / Bhutan National Grid",BASEGEOGCRS["DRUKREF 03",DATUM["Bhutan National Geodetic Datum",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],ID["EPSG",5264]],CONVERSION["Bhutan National Grid",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433]],PARAMETER["Longitude of natural origin",90,ANGLEUNIT["degree",0.0174532925199433]],PARAMETER["Scale factor at natural origin",1,SCALEUNIT["unity",1]],PARAMETER["False easting",250000,LENGTHUNIT["metre",1]],PARAMETER["False northing",-2500000,LENGTHUNIT["metre",1]]],CS[Cartesian,2],AXIS["easting (X)",east,ORDER[1],LENGTHUNIT["metre",1]],AXIS["northing (Y)",north,ORDER[2],LENGTHUNIT["metre",1]],USAGE[SCOPE["Topographic mapping."],AREA["Bhutan."],BBOX[26.7,88.74,28.33,92.13]],ID["EPSG",5266]]'
+const esriDrukref03 = 'PROJCS["DRUKREF_03_Bhutan_National_Grid",GEOGCS["GCS_DRUKREF_03",DATUM["D_DRUKREF_03",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",250000.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",90.0],PARAMETER["Scale_Factor",1.0],PARAMETER["Latitude_Of_Origin",0.0],UNIT["Meter",1.0]]'
+const ogcDrukref03 = 'PROJCS["DRUKREF 03 / Bhutan National Grid",GEOGCS["DRUKREF 03",DATUM["Bhutan_National_Geodetic_Datum",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","1058"]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433],AUTHORITY["EPSG","5264"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",90],PARAMETER["scale_factor",1],PARAMETER["false_easting",250000],PARAMETER["false_northing",0],UNIT["metre",1],AUTHORITY["EPSG","5266"]]'
+const wkt2Drukref03 = 'PROJCRS["DRUKREF 03 / Bhutan National Grid",BASEGEOGCRS["DRUKREF 03",DATUM["Bhutan National Geodetic Datum",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],ID["EPSG",5264]],CONVERSION["Bhutan National Grid",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433]],PARAMETER["Longitude of natural origin",90,ANGLEUNIT["degree",0.0174532925199433]],PARAMETER["Scale factor at natural origin",1,SCALEUNIT["unity",1]],PARAMETER["False easting",250000,LENGTHUNIT["metre",1]],PARAMETER["False northing",0,LENGTHUNIT["metre",1]]],CS[Cartesian,2],AXIS["easting (X)",east,ORDER[1],LENGTHUNIT["metre",1]],AXIS["northing (Y)",north,ORDER[2],LENGTHUNIT["metre",1]],USAGE[SCOPE["Topographic mapping."],AREA["Bhutan."],BBOX[26.7,88.74,28.33,92.13]],ID["EPSG",5266]]'
 const utm45 = 'PROJCS["WGS_1984_UTM_Zone_45N",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",500000.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",87.0],PARAMETER["Scale_Factor",0.9996],PARAMETER["Latitude_Of_Origin",0.0],UNIT["Meter",1.0]]'
 const wgs84 = 'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]]'
 
@@ -37,12 +37,33 @@ describe('DrukRef03 check', () => {
     expect(checkWkt(`BOUNDCRS[SOURCECRS[${wkt2Drukref03}],TARGETCRS[GEOGCRS["WGS 84"]],ABRIDGEDTRANSFORMATION["x",METHOD["Geocentric translations"]]]`).status).toBe('match')
   })
 
-  it('treats matching parameters under another name as probable', () => {
-    expect(checkWkt(esriDrukref03.replace('DRUKREF_03_Bhutan_National_Grid', 'Custom_Bhutan_TM'))).toEqual({ status: 'probable', name: 'Custom_Bhutan_TM' })
+  it('rejects DrukRef03 parameters under a name ArcGIS does not recognize, saying why', () => {
+    const check = checkWkt(esriDrukref03.replace('DRUKREF_03_Bhutan_National_Grid', 'Custom_Bhutan_TM'))
+    expect(check).toEqual({ status: 'mismatch', name: 'Custom_Bhutan_TM', problem: { kind: 'name' } })
+    expect(crsMessage(check).rejection).toBe('Defined as “Custom_Bhutan_TM”. Its parameters match DrukRef03, but the name is not the standard “DRUKREF_03_Bhutan_National_Grid”, so ArcGIS can’t identify it as EPSG:5266 and the service would reject it. Define the coordinate system as DrukRef03 (EPSG:5266), for example with Define Projection in ArcGIS or Save Features As in QGIS, and add the dataset again.')
   })
 
-  it('treats the DrukRef03 name with different parameters as probable', () => {
-    expect(checkWkt(esriDrukref03.replace('-2500000.0', '0.0')).status).toBe('probable')
+  it('rejects the DrukRef03 name with different parameters, listing each difference', () => {
+    const check = checkWkt(esriDrukref03.replace('PARAMETER["False_Northing",0.0]', 'PARAMETER["False_Northing",-2500000.0]').replace('PARAMETER["Scale_Factor",1.0],', ''))
+    expect(check).toEqual({ status: 'mismatch', name: 'DRUKREF_03_Bhutan_National_Grid', problem: { kind: 'parameters', differences: ['scale factor is missing', 'false northing is -2500000 m, not 0 m'] } })
+    expect(crsMessage(check).rejection).toBe('Defined as “DRUKREF_03_Bhutan_National_Grid”, but its parameters differ from DrukRef03 (EPSG:5266): scale factor is missing; false northing is -2500000 m, not 0 m. Source data must be DrukRef03 (EPSG:5266).')
+  })
+
+  it('names a different projection method', () => {
+    const check = checkWkt(esriDrukref03.replace('Transverse_Mercator', 'Lambert_Conformal_Conic'))
+    expect(check).toMatchObject({ problem: { kind: 'parameters', differences: ['projection is Lambert_Conformal_Conic, not Transverse Mercator'] } })
+  })
+
+  // EPSG:5266 has false northing 0: Bhutan's northings are about 2 950 000 to 3 130 000 m.
+  it('accepts the standard ESRI DrukRef03 .prj written by ArcGIS and QGIS', () => {
+    const prj = 'PROJCS["DRUKREF_03_Bhutan_National_Grid",GEOGCS["GCS_DRUKREF_03",DATUM["D_Bhutan_National_Geodetic_Datum",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",250000.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",90.0],PARAMETER["Scale_Factor",1.0],PARAMETER["Latitude_Of_Origin",0.0],UNIT["Meter",1.0]]'
+    expect(checkWkt(prj)).toEqual({ status: 'match', name: 'DRUKREF_03_Bhutan_National_Grid' })
+  })
+
+  it('rejects a custom-named .prj with DrukRef03 parameters, as exported by some QGIS projects', () => {
+    const prj = 'PROJCS["DRUKREF 03 national grid",GEOGCS["GCS_DRUKREF03",DATUM["D_DRUKREF03",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.017453292519943295]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",250000.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",90.0],PARAMETER["Scale_Factor",1.0],PARAMETER["Latitude_Of_Origin",0.0],UNIT["Meter",1.0]]'
+    expect(checkWkt(prj)).toEqual({ status: 'mismatch', name: 'DRUKREF 03 national grid', problem: { kind: 'name' } })
+    expect(crsMessage(checkWkt(prj)).rejection).toMatch(/^Defined as “DRUKREF 03 national grid”\. Its parameters match DrukRef03, but the name is not the standard/)
   })
 
   it('rejects other projected and geographic systems with their name', () => {
