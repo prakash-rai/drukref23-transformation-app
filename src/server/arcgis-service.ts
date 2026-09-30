@@ -24,7 +24,7 @@ export function json(data: unknown, status = 200) {
 export function explain(cause: unknown) {
   if (cause instanceof ArcGISError) return { message: cause.message, status: cause.status }
   console.error('[arcgis] unexpected error', cause)
-  return { message: 'The app server hit an unexpected error. Check the container logs.', status: 500 }
+  return { message: 'The app server hit an unexpected error. Check the service logs.', status: 500 }
 }
 
 export function failure(cause: unknown) {

@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitest/config'
 
-/** Live ArcGIS checks (`pnpm test:live`). Uses real credentials from .env; never run in CI or Docker builds. */
+/** Live ArcGIS checks (`pnpm test:live`). Uses real credentials from .env; never run in CI. */
 export default defineConfig({
   test: {
     include: ['src/**/*.live.test.ts'],

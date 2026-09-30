@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { MAX_POLL_MINUTES, POLL_INTERVAL_MS, apiUrl, checkUploadService, submitUploadPackage, type JobStatus } from './arcgis-upload'
+import { MAX_POLL_MINUTES, MAX_POLL_OUTAGE_MINUTES, POLL_INTERVAL_MS, apiUrl, checkUploadService, submitUploadPackage, type JobStatus } from './arcgis-upload'
 
 const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status })
 const noSleep = async () => undefined
@@ -92,9 +92,31 @@ describe('submitUploadPackage', () => {
     expect(downloads).toHaveLength(1)
   })
 
-  it('gives up after five consecutive polling failures with the last reason', async () => {
-    const failures = Array.from({ length: 5 }, () => json({ error: 'Job status: Cannot reach ArcGIS Server.' }, 503))
-    await expect(submitUploadPackage(new Blob(['zip']), () => undefined, { fetch: server(failures).fetch, sleep: noSleep })).rejects.toThrow('Job status: Cannot reach ArcGIS Server.')
+  it('rides out an app restart or ArcGIS outage of up to three minutes', async () => {
+    const outage = Math.ceil((MAX_POLL_OUTAGE_MINUTES * 60_000) / POLL_INTERVAL_MS) - 1
+    const failures = Array.from({ length: outage }, (_, index) => index % 2 ? new TypeError('Failed to fetch') : new Response('<html>502.3</html>', { status: 502 }))
+    const downloads: string[] = []
+    await submitUploadPackage(new Blob(['zip']), () => undefined, { fetch: server([...failures, json({ jobStatus: 'esriJobSucceeded' })]).fetch, sleep: noSleep, download: (url) => downloads.push(url) })
+    expect(downloads).toHaveLength(1)
+  })
+
+  it('gives up after three minutes of outage with the last reason', async () => {
+    const outage = Math.ceil((MAX_POLL_OUTAGE_MINUTES * 60_000) / POLL_INTERVAL_MS)
+    const failures = Array.from({ length: outage }, () => json({ error: 'Job status: Cannot reach ArcGIS Server.' }, 503))
+    await expect(submitUploadPackage(new Blob(['zip']), () => undefined, { fetch: server(failures).fetch, sleep: noSleep })).rejects.toThrow('The job status could not be read for 3 minutes. Job status: Cannot reach ArcGIS Server.')
+  })
+
+  it('explains an unreachable app server when the outage lasts too long', async () => {
+    const outage = Math.ceil((MAX_POLL_OUTAGE_MINUTES * 60_000) / POLL_INTERVAL_MS)
+    const failures = Array.from({ length: outage }, () => new TypeError('Failed to fetch'))
+    await expect(submitUploadPackage(new Blob(['zip']), () => undefined, { fetch: server(failures).fetch, sleep: noSleep })).rejects.toThrow('The job status could not be read for 3 minutes. The app server could not be reached.')
+  })
+
+  it('gives up after five consecutive non-transient polling failures with the reason', async () => {
+    const failures = Array.from({ length: 5 }, () => json({ error: 'The app server hit an unexpected error. Check the service logs.' }, 500))
+    const app = server(failures)
+    await expect(submitUploadPackage(new Blob(['zip']), () => undefined, { fetch: app.fetch, sleep: noSleep })).rejects.toThrow(/^The app server hit an unexpected error\. Check the service logs\.$/)
+    expect(app.requests.length - 1).toBe(5)
   })
 
   it('stops polling after the maximum wait', async () => {

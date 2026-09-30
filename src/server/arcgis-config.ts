@@ -1,6 +1,6 @@
 /**
  * Server-only ArcGIS configuration. Values come from environment variables
- * (loaded from `.env` in development, or from Docker `env_file` in production).
+ * (loaded from `.env`: the project folder in development, C:\apps\drukref in production).
  * Never import this module from browser code: it holds the service credentials.
  */
 export type ArcGISConfig = {
@@ -26,7 +26,7 @@ function loadDotEnv() {
   if (envLoaded) return
   envLoaded = true
   try {
-    // Node >= 20.12: loads ./.env without overriding variables already set (e.g. by Docker).
+    // Node >= 20.12: loads ./.env without overriding variables already set (e.g. by the Windows service).
     process.loadEnvFile?.()
   } catch {
     // No .env file: rely on the process environment.

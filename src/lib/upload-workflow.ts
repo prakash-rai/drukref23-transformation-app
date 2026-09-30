@@ -19,6 +19,13 @@ export type WorkflowAction =
   | { type: 'toggle'; entryId: string; datasetId: string }
   | { type: 'clear-activity' }
 
+/** While the service is unavailable (for example ArcGIS still starting after a reboot), check again this often. */
+export const HEALTH_RECHECK_MS = 30_000
+
+export function healthRecheckDelay(health: ServiceHealth) {
+  return health === 'offline' ? HEALTH_RECHECK_MS : null
+}
+
 export const initialState: WorkflowState = { entries: [], busy: false, health: 'checking', healthReason: '', messages: [], notices: [], error: '' }
 
 export function workflowReducer(state: WorkflowState, action: WorkflowAction): WorkflowState {
@@ -44,8 +51,8 @@ export function useUploadWorkflow() {
   const mounted = useRef(true)
 
   useEffect(() => () => { mounted.current = false }, [])
-  const checkHealth = useCallback(async () => {
-    dispatch({ type: 'health', value: 'checking' })
+  const checkHealth = useCallback(async ({ quiet = false } = {}) => {
+    if (!quiet) dispatch({ type: 'health', value: 'checking' })
     const result = await checkUploadService()
     if (!mounted.current) return
     dispatch(result.online ? { type: 'health', value: 'online' } : { type: 'health', value: 'offline', reason: result.reason })
@@ -60,6 +67,14 @@ export function useUploadWorkflow() {
     const result = await checkProjections(inspected)
     dispatch({ type: 'add', entry: collectionEntry(result, fallbackFile) })
   }, [])
+
+  // Re-check quietly so the banner stays in place instead of flickering to "Checking service".
+  useEffect(() => {
+    const delay = healthRecheckDelay(state.health)
+    if (delay === null) return
+    const timer = setInterval(() => void checkHealth({ quiet: true }), delay)
+    return () => clearInterval(timer)
+  }, [state.health, checkHealth])
 
   const addFiles = useCallback(async (files: File[]) => {
     dispatch({ type: 'clear-activity' })
