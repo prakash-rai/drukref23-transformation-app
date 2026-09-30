@@ -36,5 +36,5 @@ export function SourceRequirement() {
 }
 
 export function UnsupportedFormats() {
-  return <p className="flex gap-1.5 text-xs leading-5 text-amber-900"><Ban size={13} className="mt-1 shrink-0 text-amber-600" aria-hidden="true" /><span><strong className="font-semibold text-amber-800">Not supported:</strong> GeoJSON, which doesn’t record its coordinate system</span></p>
+  return <p className="flex gap-1.5 text-xs leading-5 text-amber-900"><Ban size={13} className="mt-1 shrink-0 text-amber-600" aria-hidden="true" /><span><strong className="font-semibold text-amber-800">Not supported:</strong> GeoJSON and KML, because they don’t support DrukRef03.</span></p>
 }

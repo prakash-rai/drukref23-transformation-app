@@ -27,10 +27,10 @@ describe('Add files selection', () => {
   })
 
   it('groups unsupported files by reason', () => {
-    const { notices } = classifySelection([file('a.geojson'), file('b.json'), file('c.kml'), file('d.csv')])
+    const { notices } = classifySelection([file('a.geojson'), file('b.json'), file('c.kml'), file('e.kmz'), file('d.csv')])
     expect(notices).toEqual([
-      { kind: 'unsupported', files: ['a.geojson', 'b.json'], message: expect.stringContaining('GeoJSON isn’t supported') },
-      { kind: 'unsupported', files: ['c.kml'], message: expect.stringContaining('WGS 84') },
+      { kind: 'unsupported', files: ['a.geojson', 'b.json'], message: 'GeoJSON isn’t supported because it doesn’t support DrukRef03. Export it as a GeoPackage or Shapefile in DrukRef03 first.' },
+      { kind: 'unsupported', files: ['c.kml', 'e.kmz'], message: 'KML isn’t supported because it doesn’t support DrukRef03. Export it as a GeoPackage or Shapefile in DrukRef03 first.' },
       { kind: 'unsupported', files: ['d.csv'], message: expect.stringContaining('This format isn’t supported') },
     ])
   })

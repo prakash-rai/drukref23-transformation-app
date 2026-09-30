@@ -11,8 +11,9 @@ const list = (names: string[]) => names.length <= 2 ? names.join(' and ') : `${n
 
 export function unsupportedMessage(name: string) {
   const ext = extension(name)
-  if (ext === '.geojson' || ext === '.json') return 'GeoJSON isn’t supported. It doesn’t record which coordinate system it uses, so the data can’t be checked. Export it as a GeoPackage or Shapefile in DrukRef03 first.'
-  if (ext === '.kml' || ext === '.kmz') return 'KML isn’t supported because it is always in WGS 84, not DrukRef03.'
+  // Both formats only allow WGS 84 coordinates (RFC 7946, OGC KML), so they can't hold DrukRef03 data.
+  if (ext === '.geojson' || ext === '.json') return 'GeoJSON isn’t supported because it doesn’t support DrukRef03. Export it as a GeoPackage or Shapefile in DrukRef03 first.'
+  if (ext === '.kml' || ext === '.kmz') return 'KML isn’t supported because it doesn’t support DrukRef03. Export it as a GeoPackage or Shapefile in DrukRef03 first.'
   return 'This format isn’t supported. Add a GeoPackage (.gpkg), a ZIP package, or a Shapefile folder.'
 }
 

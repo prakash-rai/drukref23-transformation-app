@@ -28,7 +28,7 @@ Users select DrukRef03 GeoPackages or ZIP packages with Add files, or select fol
 - Target coordinate system is fixed to DrukRef23, WKID 11341.
 - The server applies `DrukRef03_To_DrukRef23_NTv2.gtf`.
 - Supported inputs are GeoPackage, Shapefile folders, and ZIP packages. A ZIP may hold its datasets at the top level or inside one folder.
-- GeoJSON is not supported because the file format does not reliably carry the source projection required by this workflow.
+- GeoJSON and KML are not supported because they don't support DrukRef03 (both formats only allow WGS 84 coordinates).
 - Folder scans inspect immediate files only.
 - Shapefiles require .shp, .shx, .dbf, and .prj files. Selecting only some Shapefile parts with Add files explains how to add them (zip them, or use Add folder).
 - The browser pre-checks each dataset's coordinate system. Datasets clearly not in DrukRef03 are rejected with the detected system; unconfirmed ones stay included with a caution, and the GP service makes the final check.

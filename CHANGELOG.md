@@ -6,8 +6,8 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Added
 
-- Client-side DrukRef03 check before upload. It reads Shapefile `.prj` files and GeoPackage spatial reference tables, rejects datasets in another coordinate system with the detected name, and flags ones it cannot confirm.
-- The empty dataset list offers Add files and Add folder as tiles that say which data each takes. The card also states the DrukRef03 requirement and that GeoJSON is not supported.
+- Client-side DrukRef03 check before upload. It reads Shapefile `.prj` files and GeoPackage spatial reference tables and rejects datasets that the service would reject, with the exact reason: another coordinate system (with its name), DrukRef03 parameters under a name ArcGIS can't identify as EPSG:5266, or the DrukRef03 name with different parameters (each difference listed). It flags a GeoPackage whose definition it cannot read.
+- The empty dataset list offers Add files and Add folder as tiles that say which data each takes. The card also states the DrukRef03 requirement and that GeoJSON and KML are not supported, because they don’t support DrukRef03.
 - Add files explains incomplete Shapefile selections and unsupported formats, with a shortcut to Add folder.
 - ZIPs made by compressing a folder are read from that folder.
 - Ignored files show why they were ignored.
