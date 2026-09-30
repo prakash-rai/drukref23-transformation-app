@@ -6,6 +6,12 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Added
 
+- Client-side DrukRef03 check before upload. It reads Shapefile `.prj` files and GeoPackage spatial reference tables and rejects datasets that the service would reject, with the exact reason: another coordinate system (with its name), DrukRef03 parameters under a name ArcGIS can't identify as EPSG:5266, or the DrukRef03 name with different parameters (each difference listed). It flags a GeoPackage whose definition it cannot read.
+- The empty dataset list offers Add files and Add folder as tiles that say which data each takes. The card also states the DrukRef03 requirement and that GeoJSON and KML are not supported, because they don’t support DrukRef03.
+- Add files explains incomplete Shapefile selections and unsupported formats, with a shortcut to Add folder.
+- ZIPs made by compressing a folder are read from that folder.
+- Ignored files show why they were ignored.
+- The Transform button explains why it is disabled, and what the download contains.
 - Continuous integration and deployment with GitHub Actions. Pull requests run `pnpm check` and a Windows test of the deploy script. Merges to `main` are built on GitHub and installed by a self-hosted runner on the server, with an automatic rollback when the new release doesn't start or can't use ArcGIS ([ADR 0004](docs/decisions/0004-windows-service-with-github-deploys.md)).
 - The **DrukRef** Windows service (`deployment/windows/`): Node.js runs the app directly, starts delayed after boot, restarts after a crash, and keeps rotated logs.
 - `GET api/live`: reports that the app is running without contacting ArcGIS, for deploys and monitoring.
@@ -19,10 +25,13 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Fixed
 
+- Selecting several ZIP files with Add files no longer fails; each ZIP is inspected separately.
+- Add folder works in Firefox and Safari through a folder-input fallback.
 - The page no longer scrolls sideways. The hidden file input was 100% wide, which pushed the page past the viewport.
 
 ### Changed
 
+- The service banner shows a plain-language message; the technical reason is under Details.
 - Checking a running job now rides out up to 3 minutes of app restart or ArcGIS outage, instead of giving up after about 10 seconds. Other errors still end the wait after 5 attempts.
 - Node.js 24 LTS is required for development and production.
 - The app is served under `/drukref/` (`APP_BASE_PATH`) for publication at `https://cadastral.systems.gov.bt/drukref/`.

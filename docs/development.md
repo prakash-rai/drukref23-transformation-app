@@ -4,7 +4,7 @@ For developers working on the app. For coding rules and conventions see [AGENTS.
 
 ## Prerequisites
 
-- Node.js 24 LTS and pnpm (`corepack enable`; the version is pinned in `package.json`)
+- Node.js 24 LTS (the tests build GeoPackages with `node:sqlite`) and pnpm (`corepack enable`; the version is pinned in `package.json`)
 - Network access to `https://cadastral.systems.gov.bt` (office network or VPN) for anything that talks to ArcGIS
 
 ## Run locally
@@ -35,7 +35,9 @@ pnpm dev                 # http://localhost:3000/drukref/
 
 | Area | File | Covers |
 | --- | --- | --- |
-| Dataset inspection and packaging | `src/lib/upload-package.test.ts`, `dataset-state.test.ts` | Shapefile sidecars, ignored files, manifest, inclusion toggles |
+| Dataset inspection and packaging | `src/lib/upload-package.test.ts`, `dataset-state.test.ts` | Shapefile sidecars, ignored-file reasons, ZIP wrapper folders, manifest, inclusion toggles |
+| File selection | `src/lib/file-check.test.ts` | Incomplete Shapefile and unsupported-format notices, folder fallback |
+| Projection pre-check | `src/lib/crs.test.ts`, `projection-check.test.ts` | WKT1/WKT2/ESRI parsing, DrukRef03 matching, GeoPackage metadata via a generated SQLite file, user-visible messages |
 | Progress display | `src/lib/projection-status.test.ts` | Step detection, success/failure counts |
 | UI state | `src/lib/upload-workflow.test.ts` | Health reason, 30-second re-check while offline, message de-duplication, clearing activity |
 | Browser API client | `src/lib/arcgis-upload.test.ts` | Base path, submit errors (JSON and HTML), polling through a 3-minute outage and giving up after it, terminal job states, time-out |
